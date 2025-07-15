@@ -1,6 +1,6 @@
-package animals.parentAnimals;
+package organizm.animals.parentAnimals;
 
-public class PredatorsAnimals implements ParentAnimal{
+public class OmnivoresAnimals implements ParentAnimal {
     @Override
     public void eat() {
 

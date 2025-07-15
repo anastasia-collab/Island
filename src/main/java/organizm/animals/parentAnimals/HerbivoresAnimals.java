@@ -1,7 +1,7 @@
-package animals.parentAnimals;
+package organizm.animals.parentAnimals;
 
 public class HerbivoresAnimals implements ParentAnimal {
-
+String name;
     @Override
     public void eat() {
 

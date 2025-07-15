@@ -1,4 +1,4 @@
-package animals.parentAnimals;
+package organizm.animals.parentAnimals;
 
 public interface ParentAnimal {
     void eat();
