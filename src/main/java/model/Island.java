@@ -37,7 +37,7 @@ public class Island {
                 Location location = getRandomLocation();
                 var animal = config.createAnimal();
                 location.addAnimal(animal);
-                Statistics.registerAnimal(animal); // <--- добавлен учёт в статистике
+                Statistics.increasePopulation(animal); // <--- добавлен учёт в статистике
             }
         }
     }

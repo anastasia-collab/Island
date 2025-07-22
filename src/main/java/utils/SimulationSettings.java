@@ -6,9 +6,6 @@ import model.animals.predators.*;
 
 import java.util.function.Supplier;
 
-/**
- * Класс SimulationSettings содержит все конфигурации симуляции острова.
- */
 public final class SimulationSettings {
     private SimulationSettings() {}
 
@@ -28,22 +25,22 @@ public final class SimulationSettings {
 
     // ===== Конфигурация животных =====
     public enum AnimalConfig {
-        WOLF(50, 30, 3, 8, 0.3, 2, Wolf::new),
-        BOA(15, 30, 1, 3, 0.2, 2, Boa::new),
-        FOX(8, 30, 2, 2, 0.4, 3, Fox::new),
+        WOLF(50, 30, 3, 8, 0.3, 30, Wolf::new),
+        BOA(15, 30, 1, 3, 0.2, 30, Boa::new),
+        FOX(8, 30, 2, 2, 0.4, 30, Fox::new),
         BEAR(500, 5, 2, 80, 0.25, 5, Bear::new),
-        EAGLE(6, 20, 3, 1, 0.35, 1, Eagle::new),
+        EAGLE(6, 20, 3, 1, 0.35, 20, Eagle::new),
 
-        HORSE(400, 20, 4, 60, 0.2, 2, Horse::new),
-        DEER(300, 20, 4, 50, 0.3, 2, Deer::new),
-        RABBIT(2, 150, 2, 0.45, 0.5, 10, Rabbit::new),
-        MOUSE(0.05, 100, 1, 0.01, 0.6, 5, Mouse::new),
-        GOAT(60, 140, 3, 10, 0.4, 1, Goat::new),
-        SHEEP(70, 140, 3, 15, 0.4, 1, Sheep::new),
-        BOAR(400, 50, 2, 50, 0.35, 4, Boar::new),
-        BUFFALO(700, 10, 3, 100, 0.15, 1, Buffalo::new),
-        DUCK(1, 200, 4, 0.15, 0.45, 1, Duck::new),
-        CATERPILLAR(0.01, 100, 0, 0, 0.7, 10, Caterpillar::new);
+        HORSE(400, 20, 4, 60, 0.2, 20, Horse::new),
+        DEER(300, 20, 4, 50, 0.3, 20, Deer::new),
+        RABBIT(2, 150, 2, 0.45, 0.5, 150, Rabbit::new),
+        MOUSE(0.05, 100, 1, 0.01, 0.6, 250, Mouse::new),
+        GOAT(60, 140, 3, 10, 0.4, 140, Goat::new),
+        SHEEP(70, 140, 3, 15, 0.4, 140, Sheep::new),
+        BOAR(400, 50, 2, 50, 0.35, 50, Boar::new),
+        BUFFALO(700, 10, 3, 100, 0.15, 200, Buffalo::new),
+        DUCK(1, 200, 4, 0.15, 0.45, 1000, Duck::new),
+        CATERPILLAR(0.01, 100, 0, 0, 0.7, 200, Caterpillar::new);
 
         public final double weight;
         public final int maxPerCell;

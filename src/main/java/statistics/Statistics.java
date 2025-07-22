@@ -2,7 +2,6 @@ package statistics;
 
 import model.animals.Animal;
 
-import java.util.Comparator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -17,88 +16,75 @@ public class Statistics {
     private static final AtomicInteger totalBirths = new AtomicInteger(0);
     private static final AtomicInteger totalPlants = new AtomicInteger(0);
 
-    // Карта текущей популяции: Класс животного → Счётчик
-    private static final Map<Class<? extends Animal>, AtomicInteger> animalPopulation = new ConcurrentHashMap<>();
+    private static final Map<Class<? extends Animal>, AtomicInteger> currentPopulation = new ConcurrentHashMap<>();
 
-    // Регистрирует появление животного (при рождении или изначальной генерации)
-    public static void registerAnimal(Animal animal) {
-        animalPopulation
-                .computeIfAbsent(animal.getClass(), k -> new AtomicInteger(0))
-                .incrementAndGet();
-    }
+    // === Регистрация событий ===
 
-    // Регистрирует смерть животного от голода
     public static void recordDeathByHunger(Animal animal) {
         totalDeathsByHunger.incrementAndGet();
         deathsByHungerToday.incrementAndGet();
-        decrementAnimalCount(animal);
+        decreasePopulation(animal);
     }
 
-    // Регистрирует смерть животного от хищника
     public static void recordDeathByPredation(Animal animal) {
         totalDeathsByPredation.incrementAndGet();
-        decrementAnimalCount(animal);
+        decreasePopulation(animal);
     }
 
-    private static void decrementAnimalCount(Animal animal) {
-        animalPopulation.computeIfPresent(animal.getClass(), (cls, counter) -> {
-            counter.decrementAndGet();
-            return counter;
-        });
-    }
-
-    // Регистрирует рождение животного
     public static void recordBirth(Animal animal) {
         totalBirths.incrementAndGet();
-        registerAnimal(animal);
+        increasePopulation(animal);
     }
 
-    // Обновляет общее количество растений на острове
     public static void updatePlants(int total) {
         totalPlants.set(total);
     }
 
-    // Получает количество смертей от голода за текущий день
-    public static int getDeathsByHungerCount() {
-        return deathsByHungerToday.get();
+    public static void increasePopulation(Animal animal) {
+        currentPopulation
+                .computeIfAbsent(animal.getClass(), k -> new AtomicInteger(0))
+                .incrementAndGet();
     }
 
-    // Сбрасывает дневную статистику смертей от голода
+    public static void decreasePopulation(Animal animal) {
+        currentPopulation
+                .computeIfAbsent(animal.getClass(), k -> new AtomicInteger(0))
+                .decrementAndGet();
+    }
+
     public static void resetDailyHungerDeaths() {
         deathsByHungerToday.set(0);
     }
 
-    // Выводит общую статистику
+    public static int getDeathsByHungerCount() {
+        return deathsByHungerToday.get();
+    }
+
+    // === Вывод статистики ===
+
     public static void printStatistics() {
-        System.out.println("\n=== 📊 СТАТИСТИКА ОСТРОВА ===\n");
+        System.out.println("\n📊 === СТАТИСТИКА ===");
+        System.out.println("🌿 Растений на острове : " + totalPlants.get());
+        System.out.println("💀 Смертей от голода    : " + totalDeathsByHunger.get());
+        System.out.println("🩸 Смертей от хищников  : " + totalDeathsByPredation.get());
+        System.out.println("🐣 Всего рождений       : " + totalBirths.get());
+        System.out.println("📋 Популяция животных:");
 
-        System.out.println("Популяция животных:");
-        System.out.println("--------------------");
-        animalPopulation.entrySet().stream()
-                .sorted(Comparator.comparing(e -> e.getKey().getClass().getSimpleName()))
-                .forEach(entry -> {
-                    Animal animal = null;
-                    try {
-                        animal = entry.getKey().newInstance();
-                    } catch (InstantiationException e) {
-                        throw new RuntimeException(e);
-                    } catch (IllegalAccessException e) {
-                        throw new RuntimeException(e);
-                    }
-                    int count = entry.getValue().get();
-                    String emoji = animal.getEmoji();
-                    String name = animal.getClass().getSimpleName();
-                    System.out.printf("%s %-10s : %3d%n", emoji, name, count);
-                });
+        for (Map.Entry<Class<? extends Animal>, AtomicInteger> entry : currentPopulation.entrySet()) {
+            Class<? extends Animal> clazz = entry.getKey();
+            int count = entry.getValue().get();
+            String emoji = "?";
+            String name = clazz.getSimpleName();
 
-        System.out.println("\n🌿 Растений: " + totalPlants.get());
+            try {
+                Animal animal = clazz.getDeclaredConstructor().newInstance();
+                emoji = animal.getEmoji();
+            } catch (Exception ignored) {}
 
-        System.out.println("\nДинамика:");
-        System.out.println("---------");
-        System.out.printf("Рождений           : %d%n", totalBirths.get());
-        System.out.printf("Смертей от голода  : %d%n", totalDeathsByHunger.get());
-        System.out.printf("Смертей от хищников: %d%n", totalDeathsByPredation.get());
+            String displayCount = (count <= 0) ? "Вымерли" : String.valueOf(count);
+            System.out.printf("   %s %-12s : %s%n", emoji, name, displayCount);
+        }
 
-        System.out.println("\n==============================\n");
+        System.out.println("========================\n");
     }
 }
